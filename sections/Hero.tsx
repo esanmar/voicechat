@@ -31,8 +31,6 @@ const Hero = () => {
   const [inputValue, setInputValue] = useState(
     "Click the button below and say something!"
   );
-  const [box, setBox] = useState(true);
-  const [api_key, setApi_key] = useState("");
   const [aiRespond, setAiRespond] = useState("");
 
   const [pitch, setPitch] = useState(1);
@@ -75,7 +73,7 @@ const Hero = () => {
   };
 
   const onEnd = () => {
-    hitAPI(inputValue, api_key);
+    hitAPI(inputValue);
   };
 
   const handleTts = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -142,16 +140,17 @@ const Hero = () => {
     }
   };
 
-  const hitAPI = (msg: string, api_key: string) => {
+  const hitAPI = (msg: string) => {
     setLoading(true);
 
     fetch("/api/getChat", {
       method: "POST",
-      body: JSON.stringify({ string: msg, key: api_key }),
+      body: JSON.stringify({ string: msg, key: process.env.NEXT_PUBLIC_OPEN_AI_KEY }),
       headers: {
         "Content-Type": "application/json",
       },
     })
+      .then((response) => response.json())
       .then((data: any) => {
         setAiRespond(data.object);
         setLoading(false);
@@ -293,46 +292,6 @@ const Hero = () => {
           "{aiRespond}"
         </p>
       </div>
-
-      {box && (
-        <div
-          className={` fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary-grey-28 shadow-md p-6 gap-4 rounded ${styles.flexStart} flex-col w-[80vw] md:w-[600px] lg:w-[600px]`}
-        >
-          <h1 aria-label="Api key" className={` !text-lg primary_label_form `}>
-            Insert an OPENAI api key
-          </h1>
-          <div
-            className={` relative ${styles.flexStart} gap-3 flex-col w-full `}
-          >
-            <input
-              title="api key"
-              value={api_key}
-              className="search_input"
-              placeholder="Type your OPENAI API key here"
-              onChange={(e) => setApi_key(e.target.value)}
-            ></input>
-
-            <button
-              type="submit"
-              value={api_key}
-              className=" w-full bg-secondary-white text-primary-grey p-3 rounded-sm hover:bg-secondary-white hover:text-accent-color-71 transition-all"
-              onClick={() => {
-                if (api_key.length > 9) {
-                  setBox(false);
-                }
-              }}
-            >
-              Insert
-            </button>
-          </div>
-          <Link
-            href="https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key"
-            className=" underline "
-          >
-            How can I get my api key?
-          </Link>
-        </div>
-      )}
     </section>
   );
 };
