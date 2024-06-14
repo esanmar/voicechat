@@ -145,7 +145,7 @@ const Hero = () => {
 
     fetch("/api/getChat", {
       method: "POST",
-      body: JSON.stringify({ string: msg, key: process.env.NEXT_PUBLIC_OPEN_AI_KEY }),
+      body: JSON.stringify({ string: msg, key: process.env.OPEN_AI_KEY }),
       headers: {
         "Content-Type": "application/json",
       },
